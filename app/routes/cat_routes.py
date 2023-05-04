@@ -4,15 +4,22 @@ from app import db
 
 bp = Blueprint("cats", __name__, url_prefix="/cats")
 
+
 # GET ALL ENDPOINT
 @bp.route("", methods=["GET"])
 def handle_cats():
     cats = Cat.query.all()
     cats_list = []
     for cat in cats:
-        cats_list.append(cat.make_cat_dict())
+        cats_list.append(dict(
+            id=cat.id,
+            name=cat.name,
+            color=cat.color,
+            personality=cat.personality
+        ))
 
     return jsonify(cats_list), 200
+
 
 # CREATE ENDPOINT
 @bp.route("", methods=["POST"])
@@ -30,12 +37,19 @@ def create_cat():
 
     return make_response(f"Cat {new_cat.name} successfully created", 201)
 
+
 # GET ONE ENDPOINT
 @bp.route("/<id>", methods=["GET"])
 def handle_cat(id):
     cat = validate_cat(id)
 
-    return jsonify(cat.make_cat_dict()), 200
+    return jsonify(dict(
+        id=cat.id,
+        name=cat.name,
+        color=cat.color,
+        personality=cat.personality
+    )), 200
+
 
 # UPDATE ONE ENDPOINT
 @bp.route("/<id>", methods=["PUT"])
@@ -61,6 +75,7 @@ def delete_cat(id):
     db.session.commit()
 
     return make_response(f"Cat {cat.name} successfully deleted", 200)
+
 
 # HELPER FUNCTIONS
 def validate_cat(id):
