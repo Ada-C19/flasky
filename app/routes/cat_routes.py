@@ -11,11 +11,18 @@ bp = Blueprint("cats", __name__, url_prefix="/cats")
 def handle_cats():
 
     personality_param = request.args.get("personality")
+    color_param = request.args.get("color")
+
+    cat_query = Cat.query
+
     if personality_param:
-        cats = Cat.query.filter_by(personality=personality_param)
-    else:
-        cats = Cat.query.all()
-    cats_list = [cat.to_dict() for cat in cats]
+        cat_query = cat_query.filter(
+            Cat.personality.ilike(f"%{personality_param}%"))
+    
+    if color_param:
+        cat_query = cat_query.filter_by(color=color_param)
+
+    cats_list = [cat.to_dict() for cat in cat_query]
 
     return jsonify(cats_list), 200
 
