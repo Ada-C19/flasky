@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.models.cat import Cat
 from app import db
+from .routes_helpers import validate_model
 
 bp = Blueprint("cats", __name__, url_prefix="/cats")
 
@@ -8,15 +9,13 @@ bp = Blueprint("cats", __name__, url_prefix="/cats")
 # GET ALL ENDPOINT
 @bp.route("", methods=["GET"])
 def handle_cats():
-    cats = Cat.query.all()
-    cats_list = []
-    for cat in cats:
-        cats_list.append(dict(
-            id=cat.id,
-            name=cat.name,
-            color=cat.color,
-            personality=cat.personality
-        ))
+
+    personality_param = request.args.get("personality")
+    if personality_param:
+        cats = Cat.query.filter_by(personality=personality_param)
+    else:
+        cats = Cat.query.all()
+    cats_list = [cat.to_dict() for cat in cats]
 
     return jsonify(cats_list), 200
 
@@ -26,11 +25,7 @@ def handle_cats():
 def create_cat():
     request_body = request.get_json()
 
-    new_cat = Cat(
-        name=request_body["name"],
-        color=request_body["color"],
-        personality=request_body["personality"]
-    )
+    new_cat = Cat.from_dict(request_body)
 
     db.session.add(new_cat)
     db.session.commit()
@@ -41,20 +36,15 @@ def create_cat():
 # GET ONE ENDPOINT
 @bp.route("/<id>", methods=["GET"])
 def handle_cat(id):
-    cat = validate_cat(id)
+    cat = validate_model(Cat, id)
 
-    return jsonify(dict(
-        id=cat.id,
-        name=cat.name,
-        color=cat.color,
-        personality=cat.personality
-    )), 200
+    return jsonify(cat.to_dict()), 200
 
 
 # UPDATE ONE ENDPOINT
 @bp.route("/<id>", methods=["PUT"])
 def update_cat(id):
-    cat = validate_cat(id)
+    cat = validate_model(Cat, id)
     request_body = request.get_json()
 
     cat.color = request_body["color"]
@@ -69,7 +59,7 @@ def update_cat(id):
 # DELETE ONE ENDPOINT
 @bp.route("/<id>", methods=["DELETE"])
 def delete_cat(id):
-    cat = validate_cat(id)
+    cat = validate_model(Cat, id)
 
     db.session.delete(cat)
     db.session.commit()
@@ -77,17 +67,4 @@ def delete_cat(id):
     return make_response(f"Cat {cat.name} successfully deleted", 200)
 
 
-# HELPER FUNCTIONS
-def validate_cat(id):
-    try:
-        id = int(id)
-    except:
-        abort(make_response({"message": f"{id} was invalid"}, 400))
 
-    cat = Cat.query.get(id)
-
-    if not cat:
-        abort(make_response(
-            {"message": f"Cat with id {id} was not found"}, 404))
-
-    return cat
