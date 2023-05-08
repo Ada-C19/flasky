@@ -8,6 +8,8 @@ class Cat(db.Model):
     name = db.Column(db.String, nullable=False)
     color = db.Column(db.String, nullable=False)
     personality = db.Column(db.String, nullable=False)
+    caretaker_id = db.Column(db.Integer, db.ForeignKey("caretaker.id"))
+    caretaker = db.relationship("Caretaker", back_populates="cats")
 
     def to_dict(self):
         return {
@@ -24,32 +26,3 @@ class Cat(db.Model):
             color = data_dict["color"],
             personality = data_dict["personality"]
         )
-    
-        # return dict(
-        #         id=self.id, 
-        #         name=self.name, 
-        #         color=self.color, 
-        #         personality=self.personality
-        #     )
-
-
-# class Cat:
-#     def __init__(self, id, name, color, personality):
-#         self.id = id
-#         self.name = name
-#         self.color = color
-#         self.personality = personality
-
-#     def to_dict(self):
-        # return dict(
-        #     id=self.id, 
-        #     name=self.name, 
-        #     color=self.color, 
-        #     personality=self.personality
-        # )
-
-# cats = [ 
-#     Cat(1, "Luna", "grey", "naughty"), 
-#     Cat(2, "Orange Cat", "orange", "antagonistic"),
-#     Cat(3, "Big Ears", "grey and white", "sleepy")
-# ]

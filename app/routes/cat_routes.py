@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.models.cat import Cat
 from app import db
+from app.helpers import validate_model
 
 cats_bp = Blueprint("cats", __name__, url_prefix="/cats")
 
@@ -30,15 +31,6 @@ def get_all_cats():
         cats = Cat.query.all()
 
     results = [cat.to_dict() for cat in cats]
-
-
-    # for cat in cats: 
-    #     results.append(
-    #         cat.to_dict()
-    #     )
-
-
-
     return jsonify(results)
 
 # GET /cats/<id>
@@ -47,15 +39,8 @@ def handle_cat(id):
     cat = validate_model(Cat, id)
     return jsonify(cat.to_dict()), 200
 
-    # cat_dict = dict(
-    #             id=cat.id, 
-    #             name=cat.name, 
-    #             color=cat.color, 
-    #             personality=cat.personality
-    #         )
-
     # If we don't specify a status code, Flask will default to 200 OK.
-    # We can wrap `cat_dict`` in `jsonify``, but as a dictionary we
+    # We can wrap `cat_dict` in `jsonify`, but as a dictionary we
     # don't need to for Flask to understand how to format the response.
     
 
@@ -81,33 +66,3 @@ def delete_cat_by_id(id):
 
     message = f"Cat {cat_to_delete.name} deleted"
     return make_response(message, 200)
-
-def validate_model(cls, model_id):
-    try:
-        model_id = int(model_id)
-    except:
-        message = f"{cls.__name__} {model_id} is invalid"
-        abort(make_response({"message": message}, 400))
-    
-    model = cls.query.get(model_id)
-
-    if not model:
-        message = f"{cls.__name__} {model_id} not found"
-        abort(make_response({"message": message}, 404))
-
-    return model
-
-# def validate_model(id):
-#     try:
-#         id = int(id)
-#     except:
-#         message = f"cat {id} is invalid"
-#         abort(make_response({"message": message}, 400))
-    
-#     cat = Cat.query.get(id)
-
-#     if not cat:
-#         message = f"cat {id} not found"
-#         abort(make_response({"message": message}, 404))
-
-#     return cat
