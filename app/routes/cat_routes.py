@@ -66,3 +66,12 @@ def delete_cat_by_id(id):
 
     message = f"Cat {cat_to_delete.name} deleted"
     return make_response(message, 200)
+
+# PATCH /cats/<id>/pet
+@cats_bp.route("/<id>/pet", methods=["PATCH"])
+def pet_cat_with_id(id):
+    cat = validate_model(Cat, id)
+    cat.pet_count += 1
+
+    db.session.commit()
+    return jsonify(cat.to_dict())
