@@ -18,11 +18,12 @@ def handle_cats():
     if personality_param:
         cat_query = cat_query.filter(
             Cat.personality.ilike(f"%{personality_param}%"))
-    
+
     if color_param:
         cat_query = cat_query.filter_by(color=color_param)
 
-    cats_list = [cat.to_dict() for cat in cat_query]
+    cats = cat_query.order_by(Cat.id).all()
+    cats_list = [cat.to_dict() for cat in cats]
 
     return jsonify(cats_list), 200
 
