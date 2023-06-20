@@ -62,6 +62,15 @@ def update_cat(id):
 
     return make_response(f"Cat {cat.name} successfully updated", 200)
 
+# UPDATE PET COUNT ENDPOINT
+@bp.route("/<id>/pet", methods=["PATCH"])
+def pet_cat_with_id(id):
+    cat = validate_model(Cat, id)
+    cat.pet_count += 1
+
+    db.session.commit()
+    return jsonify(cat.to_dict()), 200
+
 
 # DELETE ONE ENDPOINT
 @bp.route("/<id>", methods=["DELETE"])

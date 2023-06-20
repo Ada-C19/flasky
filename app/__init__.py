@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from flask_cors import CORS
 import os
 
 db = SQLAlchemy()
@@ -15,10 +16,10 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     if not test_config:
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-            "RENDER_DATABASE_URI")
         # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-        #     "SQLALCHEMY_DATABASE_URI")
+            # "RENDER_DATABASE_URI")
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+            "SQLALCHEMY_DATABASE_URI")
     else:
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
