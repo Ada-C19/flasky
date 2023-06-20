@@ -38,7 +38,7 @@ def create_cat():
     db.session.add(new_cat)
     db.session.commit()
 
-    return make_response(f"Cat {new_cat.name} successfully created", 201)
+    return jsonify(new_cat.to_dict()), 201
 
 
 # GET ONE ENDPOINT
