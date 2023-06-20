@@ -18,11 +18,12 @@ def handle_cats():
     if personality_param:
         cat_query = cat_query.filter(
             Cat.personality.ilike(f"%{personality_param}%"))
-    
+
     if color_param:
         cat_query = cat_query.filter_by(color=color_param)
 
-    cats_list = [cat.to_dict() for cat in cat_query]
+    cats = cat_query.order_by(Cat.id).all()
+    cats_list = [cat.to_dict() for cat in cats]
 
     return jsonify(cats_list), 200
 
@@ -37,7 +38,7 @@ def create_cat():
     db.session.add(new_cat)
     db.session.commit()
 
-    return make_response(f"Cat {new_cat.name} successfully created", 201)
+    return jsonify(new_cat.to_dict()), 201
 
 
 # GET ONE ENDPOINT
@@ -61,6 +62,15 @@ def update_cat(id):
     db.session.commit()
 
     return make_response(f"Cat {cat.name} successfully updated", 200)
+
+# UPDATE PET COUNT ENDPOINT
+@bp.route("/<id>/pet", methods=["PATCH"])
+def pet_cat_with_id(id):
+    cat = validate_model(Cat, id)
+    cat.pet_count += 1
+
+    db.session.commit()
+    return jsonify(cat.to_dict()), 200
 
 
 # DELETE ONE ENDPOINT
