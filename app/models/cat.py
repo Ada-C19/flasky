@@ -7,13 +7,16 @@ class Cat(db.Model):
     color = db.Column(db.String)
     personality = db.Column(db.String)
     pet_count = db.Column(db.Integer, nullable=False, default=0)
+    caretaker = db.relationship("Caretaker", back_populates="cats")
+    caretaker_id = db.Column(db.Integer, db.ForeignKey("caretaker.id"))
 
     @classmethod
-    def from_dict(cls, data_dict):
+    def from_dict(cls, data_dict, caretaker):
         new_cat = cls(
             name=data_dict["name"],
             color=data_dict["color"],
-            personality=data_dict["personality"]
+            personality=data_dict["personality"],
+            caretaker=caretaker
         )
         if "pet_count" in data_dict:
             new_cat.pet_count = data_dict["pet_count"]
@@ -26,7 +29,8 @@ class Cat(db.Model):
             name=self.name,
             color=self.color,
             personality=self.personality,
-            pet_count=self.pet_count
+            pet_count=self.pet_count,
+            caretaker=self.caretaker_id
         )
         
     
