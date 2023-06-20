@@ -1,7 +1,7 @@
 """adds caretaker model and updates relationship between cat and caretaker
 
 Revision ID: 525e2ce4a027
-Revises: 5857683fef96
+Revises: 65da219caf02
 Create Date: 2023-05-08 14:14:57.702437
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '525e2ce4a027'
-down_revision = '5857683fef96'
+down_revision = '65da219caf02'
 branch_labels = None
 depends_on = None
 
