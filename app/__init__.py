@@ -30,5 +30,5 @@ def create_app(test_config=None):
 
     from .routes.cat_routes import bp
     app.register_blueprint(bp)
-
+    CORS(app)
     return app
