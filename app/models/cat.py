@@ -11,7 +11,7 @@ class Cat(db.Model):
     caretaker_id = db.Column(db.Integer, db.ForeignKey("caretaker.id"))
 
     @classmethod
-    def from_dict(cls, data_dict, caretaker):
+    def from_dict(cls, data_dict, caretaker=None):
         new_cat = cls(
             name=data_dict["name"],
             color=data_dict["color"],
