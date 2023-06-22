@@ -30,7 +30,7 @@ class Cat(db.Model):
             color=self.color,
             personality=self.personality,
             pet_count=self.pet_count,
-            caretaker=self.caretaker_id
+            caretaker=self.caretaker.name if self.caretaker else ""
         )
         
     
